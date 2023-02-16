@@ -21,7 +21,7 @@ jobs:
 
       - name: Auto-update
         run: |
-          ./.github/workflows/scripts/auto-update-version.sh "opentelemetry-collector-releases" "content/en/docs/collector/_index.md" "collectorVersion"
-          ./.github/workflows/scripts/auto-update-version.sh "opentelemetry-java" "content/en/docs/instrumentation/java/_index.md" "javaVersion"
+          ./.github/workflows/scripts/auto-update-version.sh "opentelemetry-collector-releases" "collectorVersion" "content/en/docs/collector/_index.md"
+          ./.github/workflows/scripts/auto-update-version.sh "opentelemetry-java" "javaVersion" "content/en/docs/instrumentation/java/_index.md" "content/en/docs/instrumentation/java/manual.md"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -7,8 +7,8 @@
 # https://github.com/grafana/opentelemetry-collector-components/blob/main/scripts/update-to-latest-otelcol.sh
 
 repo=$1
-file_name=$2
-variable_name=$3
+variable_name=$2
+file_names=("${@:2}") # remaining args
 
 GH=gh
 GIT=git
@@ -25,14 +25,17 @@ latest_version=$(gh api -q .tag_name "repos/open-telemetry/$repo/releases/latest
 echo "Repo: $repo"
 echo "Latest version: $latest_version"
 
-sed -i -e "s/$variable_name: .*/$variable_name: $latest_version/" "$file_name"
+for file_name in "${file_names[@]}"
+do
+  sed -i -e "s/$variable_name: .*/$variable_name: $latest_version/" "$file_name"
+done
 
-if git diff --quiet "$file_name"; then
-    echo "We are already at the latest version."
-    exit 0
+if git diff --quiet; then
+  echo "We are already at the latest version."
+  exit 0
 else
   echo "Version update necessary:"
-  git diff "$file_name"
+  git diff
   echo
 fi
 
@@ -48,8 +51,7 @@ fi
 branch="opentelemetrybot/auto-update-$repo-$latest_version"
 
 $GIT checkout -b "$branch"
-$GIT add "$file_name"
-$GIT commit -m "$message"
+$GIT commit -a -m "$message"
 $GIT push --set-upstream origin "$branch"
 
 echo "Creating a pull request on your behalf."
