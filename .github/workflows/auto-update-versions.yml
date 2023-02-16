@@ -24,4 +24,4 @@ jobs:
           ./.github/workflows/scripts/auto-update-version.sh "opentelemetry-collector-releases" "content/en/docs/collector/_index.md" "collectorVersion"
           ./.github/workflows/scripts/auto-update-version.sh "opentelemetry-java" "content/en/docs/instrumentation/java/_index.md" "javaVersion"
         env:
-          GH_TOKEN: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
