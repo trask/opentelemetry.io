@@ -13,7 +13,7 @@ variable_name=$3
 GH=gh
 GIT=git
 
-if [[ "$1" == "--dry-run" ]]; then
+if [[ "$4" == "--dry-run" ]]; then
   echo Doing a dry run.
   GH="echo > DRY RUN: gh "
   GIT="echo > DRY RUN: git "
@@ -25,7 +25,7 @@ latest_version=$(gh api -q .tag_name "repos/open-telemetry/$repo/releases/latest
 echo "Repo: $repo"
 echo "Latest version: $latest_version"
 
-sed -i -e "s/collectorVersion:.*/collectorVersion: $latest_version/" "$file_name"
+sed -i -e "s/$variable_name: .*/$variable_name: $latest_version/" "$file_name"
 
 if git diff --quiet "$file_name"; then
     echo "We are already at the latest version."
