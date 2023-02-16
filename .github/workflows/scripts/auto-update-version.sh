@@ -8,7 +8,7 @@
 
 repo=$1
 variable_name=$2
-file_names=("${@:2}") # remaining args
+file_names=("${@:3}") # remaining args
 
 GH=gh
 GIT=git
