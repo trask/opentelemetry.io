@@ -9,11 +9,18 @@ on:
 jobs:
   update-semconv-integration-branch:
     runs-on: ubuntu-latest
-    #if: github.repository == 'open-telemetry/opentelemetry.io'
+    # TRASK TODO if: github.repository == 'open-telemetry/opentelemetry.io'
     steps:
       - uses: actions/checkout@v4
+        with:
+          # this is needed in order to do the rebase belo
+          fetch-depth: 0
+          # this is needed in order to trigger workflows when pushing new commits to the PR
+          # TRASK TODO token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
 
       - name: Look for an existing branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version=$(git branch -r \
                         | grep '^ *origin/opentelemetrybot/semantic-conventions-v[0-9]+\.[0-9]+\.[0-9]+$' \
@@ -35,22 +42,20 @@ jobs:
           fi
 
           echo "VERSION=$version" >> $GITHUB_ENV
-          echo "BRANCH=opentelemetrybot/semantic-conventions-${VERSION}" >> $GITHUB_ENV
+          echo "BRANCH=opentelemetrybot/semantic-conventions-${version}" >> $GITHUB_ENV
 
-      - name: Create branch if needed
+      - name: Create or checkout branch if needed
         run: |
-          if ! git ls-remote --exit-code --heads origin $branch; then
-            git checkout -b $BRANCH
-            git push origin $BRANCH
+          if ! git ls-remote --exit-code --heads origin $BRANCH; then
+            echo here1
+            git checkout -b $BRANCH origin/main
+            echo here2
+            git push -u origin $BRANCH
+            echo here3
+          else
+            echo here4
+            git checkout $BRANCH
           fi
-
-      - uses: actions/checkout@v4
-        with:
-          ref: $BRANCH
-          # this is needed in order to do rebase below
-          fetch-depth: 0
-          # this is needed in order to trigger workflows when pushing new commits to the PR
-          token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
 
       - name: Use CLA approved github bot
         run: |
@@ -89,7 +94,11 @@ jobs:
           # not using secrets.GITHUB_TOKEN since pull requests from that token do not run workflows
           GH_TOKEN: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
         run: |
-          if ! gh pr list --state open --head $BRANCH; then
+          echo here0 $BRANCH
+          output=$(gh pr list --state open --head $BRANCH)
+          if [ -z "$output" ]; then
+            echo here1 $BRANCH
             gh pr create --title "Update semantic conventions to ${VERSION}" \
                          --body "This PR updates the semantic conventions to ${VERSION}."
+            echo here2
           fi
