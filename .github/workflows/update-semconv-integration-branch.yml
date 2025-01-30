@@ -9,14 +9,14 @@ on:
 jobs:
   update-semconv-integration-branch:
     runs-on: ubuntu-latest
-    if: github.repository == 'open-telemetry/opentelemetry.io'
+    #if: github.repository == 'open-telemetry/opentelemetry.io'
     steps:
       - uses: actions/checkout@v4
         with:
           # this is needed in order to do the rebase below
           fetch-depth: 0
           # this is needed in order to trigger workflows when pushing new commits to the PR
-          token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
+          #token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
 
       - name: Set environment variables
         env:
@@ -86,7 +86,9 @@ jobs:
 
           sed -i "s/^\tsemconv-pin = .*/\tsemconv-pin = $commit_desc/" .gitmodules
 
-          if ! git diff-index --quiet HEAD; then
+          git add content-modules/semantic-conventions .gitmodules
+
+          if ! git diff-index --quiet --cached HEAD; then
             git commit -am "Update semconv submodule to $commit_desc"
             git push
           fi
