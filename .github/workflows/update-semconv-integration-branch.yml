@@ -87,6 +87,8 @@ jobs:
 
           sed -i "s/^\tsemconv-pin = .*/\tsemconv-pin = $commit_desc/" .gitmodules
 
+          npm run get:submodule -- content-modules/semantic-conventions
+
           if ! git diff-index --quiet HEAD; then
             git commit -am "Update semconv submodule to $commit_desc"
             git push
