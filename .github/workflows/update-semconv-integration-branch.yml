@@ -9,14 +9,14 @@ on:
 jobs:
   update-semconv-integration-branch:
     runs-on: ubuntu-latest
-    if: github.repository == 'open-telemetry/opentelemetry.io'
+    # TODO (trask) if: github.repository == 'open-telemetry/opentelemetry.io'
     steps:
       - uses: actions/checkout@v4
         with:
           # this is needed in order to do the rebase below
           fetch-depth: 0
           # this is needed in order to trigger workflows when pushing new commits to the PR
-          token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
+          # TODO (trask) token: ${{ secrets.OPENTELEMETRYBOT_GITHUB_TOKEN }}
 
       - name: Set environment variables
         env:
