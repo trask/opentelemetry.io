@@ -86,6 +86,10 @@ jobs:
 
           sed -i "s/^\tsemconv-pin = .*/\tsemconv-pin = $commit_desc/" .gitmodules
 
+          echo ========================
+          git diff
+          echo ========================
+
           if ! git diff-index --quiet HEAD; then
             git commit -am "Update semconv submodule to $commit_desc"
             git push
